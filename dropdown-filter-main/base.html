@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="./css_final.css">
+    
+    <script src="./filter.js"></script>
+    
+    <!-- <link rel="stylesheet" href="./css-1.css"> -->
+    <title>Fixed table</title>
+</head>
+
+<body>
+    <div class="heading">
+    <h1>Dropdown table filter using JavaScript</h1>
+    <!-- <button id="get-unique-values" onclick="getUniqueValuesFromColumn()">Get unique column values</button> -->
+</div>
+    <div class="outer-wrapper">
+    <div class="table-wrapper">
+    <table id="emp-table">
+        <thead>
+            <th col-index = 1 >Employee ID <input type="number" id="min" class="table-filter" onchange="filter_rows()"><input type="number" id="max" class="table-filter" onchange="filter_rows()"></th>
+            <th col-index = 2>Gender
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select>
+            </th>
+
+            <th col-index = 3>Department
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select>
+            </th>
+            <th col-index = 4>Status
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select>
+            </th>
+            <th col-index = 5>Office
+                <select class="table-filter" onchange="filter_rows()">
+                    <option value="all"></option>
+                </select>
+            </th>
+            
+        </thead>
+        <tbody>
+            <tr>
+                <td>101</td>
+                <td>M</td>
+                <td>RnD</td>
+                <td>Online</td>
+                <td>Site 1</td>
+            </tr>
+            <tr>
+                <td>102</td>
+                <td>M</td>
+                <td>RnD</td>
+                <td>On Leave</td>
+                <td>Site 1</td>
+            </tr>
+            <tr>
+                <td>103</td>
+                <td>F</td>
+                <td>RnD</td>
+                <td>Online</td>
+                <td>Site 1</td>
+            </tr>
+            <tr>
+                <td>104</td>
+                <td>F</td>
+                <td>Engineering</td>
+                <td>Online</td>
+                <td>Site 1</td>
+            </tr>
+            <tr>
+                <td>201</td>
+                <td>F</td>
+                <td>Engineering</td>
+                <td>On Leave</td>
+                <td>Site 2</td>
+            </tr>
+            <tr>
+                <td>202</td>
+                <td>F</td>
+                <td>Engineering</td>
+                <td>Online</td>
+                <td>Site 2</td>
+            </tr>
+            <tr>
+                <td>203</td>
+                <td>M</td>
+                <td>Engineering</td>
+                <td>Online</td>
+                <td>Site 2</td>
+            </tr>
+            
+
+        </tbody>
+    </table>
+    <!-- <script>getUniqueValuesFromColumn()
+    </script> -->
+    <script>
+        window.onload = () => {
+            console.log(document.querySelector("#emp-table > tbody > tr:nth-child(1) > td:nth-child(2) ").innerHTML);
+        };
+
+        getUniqueValuesFromColumn()
+        
+    </script><script>// Get unique values for the desired columns
+
+// {2 : ["M", "F"], 3 : ["RnD", "Engineering", "Design"], 4 : [], 5 : []}
+
+function getUniqueValuesFromColumn() {
+
+    var unique_col_values_dict = {}
+
+    allFilters = document.querySelectorAll(".table-filter")
+    allFilters.forEach((filter_i) => {
+        col_index = filter_i.parentElement.getAttribute("col-index");
+        // alert(col_index)
+        const rows = document.querySelectorAll("#emp-table > tbody > tr")
+
+        rows.forEach((row) => {
+            cell_value = row.querySelector("td:nth-child("+col_index+")").innerHTML;
+            // if the col index is already present in the dict
+            if (col_index in unique_col_values_dict) {
+
+                // if the cell value is already present in the array
+                if (unique_col_values_dict[col_index].includes(cell_value)) {
+                    // alert(cell_value + " is already present in the array : " + unique_col_values_dict[col_index])
+
+                } else {
+                    unique_col_values_dict[col_index].push(cell_value)
+                    // alert("Array after adding the cell value : " + unique_col_values_dict[col_index])
+
+                }
+
+
+            } else {
+                unique_col_values_dict[col_index] = new Array(cell_value)
+            }
+        });
+
+        
+    });
+
+    for(i in unique_col_values_dict) {
+        alert("Column index : " + i + " has Unique values : \n" + unique_col_values_dict[i]);
+    }
+
+    updateSelectOptions(unique_col_values_dict)
+
+};
+
+// Add <option> tags to the desired columns based on the unique values
+
+function updateSelectOptions(unique_col_values_dict) {
+    allFilters = document.querySelectorAll(".table-filter")
+
+    allFilters.forEach((filter_i) => {
+        col_index = filter_i.parentElement.getAttribute('col-index')
+
+        unique_col_values_dict[col_index].forEach((i) => {
+            filter_i.innerHTML = filter_i.innerHTML + `\n<option value="${i}">${i}</option>`
+        });
+
+    });
+};
+
+
+// Create filter_rows() function
+
+// filter_value_dict {2 : Value selected, 4:value, 5: value}
+
+function filter_rows() {
+    const min = parseInt(document.getElementById('min').value) || 0;
+    const max = parseInt(document.getElementById('max').value) || Number.MAX_VALUE;
+
+    //const rows = document.querySelectorAll("#emp-table tbody tr");
+    
+    allFilters = document.querySelectorAll(".table-filter")
+    var filter_value_dict = {}
+
+    allFilters.forEach((filter_i) => {
+        col_index = filter_i.parentElement.getAttribute('col-index')
+
+        value = filter_i.value
+        if (value != "all") {
+            filter_value_dict[col_index] = value;
+            console.log(value);
+        }
+    });
+
+    var col_cell_value_dict = {};
+
+    const rows = document.querySelectorAll("#emp-table tbody tr");
+    rows.forEach((row) => {
+        var display_row = true;
+
+        allFilters.forEach((filter_i) => {
+            col_index = filter_i.parentElement.getAttribute('col-index')
+            col_cell_value_dict[col_index] = row.querySelector("td:nth-child(" + col_index+ ")").innerHTML
+        })
+
+        for (var col_i in filter_value_dict) {
+            filter_value = filter_value_dict[col_i]
+            row_cell_value = col_cell_value_dict[col_i]
+            
+            if (row_cell_value.indexOf(filter_value) == -1 && filter_value != "all") {
+                display_row = false;
+                break;
+            }
+
+
+        }
+
+        if (display_row == true) {
+            row.style.display = "table-row"
+
+        } else {
+            row.style.display = "none"
+
+        }
+
+
+
+
+
+    })
+
+}
+</script>
+</div>
+</div>
+</body>
+
+</html>

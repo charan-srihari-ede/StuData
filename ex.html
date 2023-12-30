@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Table</title>
+</head>
+<body>
+    <label for="min">Min:</label>
+    <input type="number" id="min">
+    
+    <label for="max">Max:</label>
+    <input type="number" id="max">
+
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>S. No</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr>
+                <td>1</td>
+                <td>alice</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>bob</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>charlie</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ... (your HTML code remains the same) ... -->
+
+<script>
+    const minInput = document.getElementById('min');
+    const maxInput = document.getElementById('max');
+    const tableRows = document.querySelectorAll('#data-table tbody tr');
+
+    // Function to update table based on input range
+    function updateTable() {
+        const min = parseInt(minInput.value) || 0; // Default to 0 if input is empty
+        const max = parseInt(maxInput.value) || Number.MAX_VALUE; // Default to max value if input is empty
+
+        // Iterate through table rows and show/hide based on filter criteria
+        tableRows.forEach(row => {
+            const sno = parseInt(row.cells[0].textContent); // Assuming first cell contains S. No
+            if (sno >= min && sno <= max) {
+                row.style.display = ''; // Show the row
+            } else {
+                row.style.display = 'none'; // Hide the row
+            }
+        });
+    }
+
+    // Update table when input values change
+    minInput.addEventListener('input', updateTable);
+    maxInput.addEventListener('input', updateTable);
+
+    // Initial table update when the page loads
+    updateTable();
+</script>
+</body>
+</html>
+
+</body>
+
+<script>
+function filter_rows() {
+    const min = parseInt(document.getElementById('min').value) || 0;
+    const max = parseInt(document.getElementById('max').value) || Number.MAX_VALUE;
+
+    const rows = document.querySelectorAll("#emp-table tbody tr");
+    rows.forEach((row) => {
+        const employeeId = parseInt(row.querySelector("td:nth-child(1)").textContent); // Assuming Employee ID is the first column (1-based index)
+
+        if (employeeId >= min && employeeId <= max) {
+            row.style.display = "table-row";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+</script>
+</html>
